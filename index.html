@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Packages</title>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+
+	<style type="text/css" media="screen">
+		body { padding: 100px; }
+	</style>
+</head>
+<body>
+	<div id="app">
+		<div class="container">
+			<div class="row">
+				<div 
+					class="package alert col col-xs-4"
+					v-bind:class="{ 'selected alert-info': package.id == selected.package.id }"
+					v-for="package in packages" >
+
+					<header class="package__head">
+						<h2>{{ package.title }}</h2>
+					</header><!-- /.package__head -->
+
+					<div
+						class="package__content"
+						v-html="package.content">
+					</div>
+
+					<a
+						href="#"
+						v-on:click.prevent="select(package)" >
+
+						{{ package.button }}
+					</a>
+				</div>
+			</div><!-- /.row -->
+		
+			<div 
+				class="row"
+				v-if="selected.package" >
+				<div
+					class ="extra alert col col-xs-4"
+					v-bind:class="{ 'alert-info' : isSelected(extra) }" 
+					v-for = "extra in extras"
+					v-if = "isAvailable(extra)" >
+			
+					<header class="extra__head">
+						<h5>{{ extra.title }}</h5>
+					</header><!-- /.extra__head -->
+			
+					<div 
+						class="extra__content"
+						v-html="extra.content">
+					</div>
+			
+					<a 
+						href="#"
+						v-on:click.prevent="action(extra)" >
+			
+						{{ isSelected(extra) ? extra.link[1] : extra.link[0] }} 
+					</a>
+				</div>
+			</div>
+			
+			<div 
+				class="row"
+				v-if="selected.package" >
+				
+				<div 
+					class="alert alert-info col col-xs-12"
+					v-if="selected.package" >
+
+					<h4>You select {{ selected.package.title }}</h4>
+					
+					<div v-if="selected.extras.length">
+						<p >and below extras </p>
+
+						<ul>
+							<li v-for="extra in selected.extras">
+								<a 
+									href="#"
+									v-on:click.prevent="action(extra)" >
+									{{ extra.title }} -
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div><!-- /.alert alert-success -->
+			</div>	
+			</div><!-- /.row -->
+	</div><!-- /.container -->
+
+	<script type="text/javascript">
+		const data = {
+			packages: [
+				{	
+					id: 1,
+					title: 'Package 1',
+					content: '<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit, hic?</p>',
+					price: 100,
+					currency: '$',
+					button: 'get package 1',
+					extras: [ 1, 2, 3]
+				},
+				{
+					id: 2,
+					title: 'Package 2',
+					content: '<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit, hic?</p>',
+					price: 100,
+					currency: '$',
+					button: 'get package 2',
+					extras: [2,3,4]
+				},
+				{
+					id: 3,
+					title: 'Package 3',
+					content: '<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit, hic?</p>',
+					price: 100,
+					currency: '$',
+					button: 'get package 3',
+					extras: [1]
+				}
+			],
+			extras: [
+				{
+					id : 1,
+					tag : 'Extra 1',
+					title : 'Extra Title 1',
+					content: '<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit, hic?</p>',
+					link: ['extra 1 +', 'extra 1 -']
+				},
+				{
+					id : 2,
+					tag : 'Extra 2',
+					title : 'Extra Title 2',
+					content: '<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit, hic?</p>',
+					link: ['extra 2 +', 'extra 2 -']
+				},
+				{
+					id : 3,
+					tag : 'Extra 3',
+					title : 'Extra Title 3',
+					content: '<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit, hic?</p>',
+					link: ['extra 3 +', 'extra 3 -']
+				},
+				{
+					id : 4,
+					tag : 'Extra 4',
+					title : 'Extra Title 4',
+					content: '<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit, hic?</p>',
+					link: ['extra 4 +', 'extra 4 -']
+				}
+			],
+			selected: {
+				package: {
+					id: 3,
+					title: 'Package 3',
+					content: '<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit, hic?</p>',
+					price: 100,
+					currency: '$',
+					button: 'get package 3',
+					extras: [1]
+				},
+				extras: []
+			}
+		};
+
+		const app = new Vue({
+		  	el: '#app',
+		  	data,
+			methods: {
+				select(package) {
+					this.selected.package  =  package;
+					this.selected.extras = [];
+				},
+				action(extra) {
+					if (this.isSelected(extra)) 
+					 	this.selected.extras = this.selected.extras.filter(val => val !== extra);
+					else 
+						this.selected.extras.push(extra);
+				},
+				isAvailable(extra) {
+					return this.selected.package.extras.find( id => id === extra.id );
+				},
+				isSelected(extra) {
+					return this.selected.extras.find( i => i.id === extra.id );
+				},
+			}
+		});
+	</script>
+</body>
+</html>
